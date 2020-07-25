@@ -18,8 +18,8 @@ resource "aws_subnet" "default" {
   map_public_ip_on_launch = true
 }
 
-resource "aws_security_group" "default" {
-  name        = "default"
+resource "aws_security_group" "main" {
+  name        = "ssh"
   vpc_id      = aws_vpc.default.id
 
   ingress {

@@ -21,7 +21,7 @@ resource "aws_instance" "minio" {
   instance_type = var.minio_server_instance
   ami = var.aws_ami
   key_name = aws_key_pair.auth.id
-  vpc_security_group_ids = [aws_security_group.default.id]
+  vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id = aws_subnet.default.id
 
   # provisioner "remote-exec" {
@@ -39,7 +39,7 @@ resource "aws_instance" "worker" {
   instance_type = var.worker_instance
   ami = var.aws_ami
   key_name = aws_key_pair.auth.id
-  vpc_security_group_ids = [aws_security_group.default.id]
+  vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id = aws_subnet.default.id
 
   # provisioner "remote-exec" {
