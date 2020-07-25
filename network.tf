@@ -19,8 +19,8 @@ resource "aws_subnet" "default" {
 }
 
 resource "aws_security_group" "main" {
-  name        = "ssh"
-  vpc_id      = aws_vpc.default.id
+  name   = "ssh"
+  vpc_id = aws_vpc.default.id
 
   ingress {
     from_port   = 22
@@ -30,9 +30,9 @@ resource "aws_security_group" "main" {
   }
 
   ingress {
-    from_port = 0
-    to_port = 0
-    protocol = -1
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
     cidr_blocks = ["10.0.0.0/16"]
   }
 

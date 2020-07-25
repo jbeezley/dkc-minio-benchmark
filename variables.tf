@@ -1,6 +1,6 @@
 variable "public_key_path" {
   description = "Path to a public key used to ssh into the instances"
-  default = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "key_name" {
