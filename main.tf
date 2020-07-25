@@ -24,15 +24,26 @@ resource "aws_instance" "minio" {
   vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id              = aws_subnet.default.id
 
+  tags = {
+    Name = "minio"
+  }
+
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    host = aws_instance.minio.public_ip
+  }
+
   provisioner "file" {
     source      = "minio-server.sh"
     destination = "/tmp/minio-server.sh"
+
   }
 
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/minio-server.sh",
-      "/tmp/minio-server.sh"
+      "sudo /tmp/minio-server.sh"
     ]
   }
 }
@@ -43,6 +54,16 @@ resource "aws_instance" "worker" {
   key_name               = aws_key_pair.auth.id
   vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id              = aws_subnet.default.id
+
+  tags = {
+    Name = "worker"
+  }
+
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    host = aws_instance.minio.public_ip
+  }
 
   # provisioner "remote-exec" {
   #   inline = [
