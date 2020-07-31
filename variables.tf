@@ -25,6 +25,10 @@ variable "minio_server_instance" {
   default = "t2.micro"
 }
 
+variable "warp_server_instance" {
+  default = "t2.micro"
+}
+
 variable "worker_instance" {
   default = "t2.micro"
 }

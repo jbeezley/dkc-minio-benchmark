@@ -34,6 +34,14 @@ resource "aws_instance" "minio" {
     host = aws_instance.minio.public_ip
   }
 
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get -y update",
+      "sudo apt-get -y install docker.io",
+      "sudo usermod -a -G docker ubuntu"
+    ]
+  }
+
   provisioner "file" {
     source      = "minio-server.sh"
     destination = "/tmp/minio-server.sh"
@@ -43,7 +51,33 @@ resource "aws_instance" "minio" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/minio-server.sh",
-      "sudo /tmp/minio-server.sh"
+      "/tmp/minio-server.sh"
+    ]
+  }
+}
+
+resource "aws_instance" "warp" {
+  instance_type          = var.warp_server_instance
+  ami                    = var.aws_ami
+  key_name               = aws_key_pair.auth.id
+  vpc_security_group_ids = [aws_security_group.main.id]
+  subnet_id              = aws_subnet.default.id
+
+  tags = {
+    Name = "warp"
+  }
+
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    host = aws_instance.warp.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get -y update",
+      "sudo apt-get -y install docker.io",
+      "sudo usermod -a -G docker ubuntu"
     ]
   }
 }
@@ -62,16 +96,26 @@ resource "aws_instance" "worker" {
   connection {
     type = "ssh"
     user = "ubuntu"
-    host = aws_instance.minio.public_ip
+    host = aws_instance.worker.public_ip
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sudo apt-get -y update",
-  #     "sudo apt-get -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common",
-  #     "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
-  #     "sudo apt-get -y update",
-  #     "sudo apt-get install docker-ce docker-ce-cli containerd.io",
-  #   ]
-  # }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get -y update",
+      "sudo apt-get -y install docker.io",
+      "sudo usermod -a -G docker ubuntu"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "warp-client.sh"
+    destination = "/tmp/warp-client.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/warp-client.sh",
+      "/tmp/warp-client.sh"
+    ]
+  }
 }
