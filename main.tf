@@ -23,9 +23,14 @@ resource "aws_instance" "minio" {
   key_name               = aws_key_pair.auth.id
   vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id              = aws_subnet.default.id
+  private_ip             = "10.0.1.10"
 
   tags = {
     Name = "minio"
+  }
+
+  root_block_device {
+    volume_size = "100"
   }
 
   connection {
@@ -44,14 +49,14 @@ resource "aws_instance" "minio" {
 
   provisioner "file" {
     source      = "minio-server.sh"
-    destination = "/tmp/minio-server.sh"
+    destination = "/home/ubuntu/minio-server.sh"
 
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/minio-server.sh",
-      "/tmp/minio-server.sh"
+      "chmod +x /home/ubuntu/minio-server.sh",
+      "/home/ubuntu/minio-server.sh"
     ]
   }
 }
@@ -78,44 +83,6 @@ resource "aws_instance" "warp" {
       "sudo apt-get -y update",
       "sudo apt-get -y install docker.io",
       "sudo usermod -a -G docker ubuntu"
-    ]
-  }
-}
-
-resource "aws_instance" "worker" {
-  instance_type          = var.worker_instance
-  ami                    = var.aws_ami
-  key_name               = aws_key_pair.auth.id
-  vpc_security_group_ids = [aws_security_group.main.id]
-  subnet_id              = aws_subnet.default.id
-
-  tags = {
-    Name = "worker"
-  }
-
-  connection {
-    type = "ssh"
-    user = "ubuntu"
-    host = aws_instance.worker.public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get -y update",
-      "sudo apt-get -y install docker.io",
-      "sudo usermod -a -G docker ubuntu"
-    ]
-  }
-
-  provisioner "file" {
-    source      = "warp-client.sh"
-    destination = "/tmp/warp-client.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/warp-client.sh",
-      "/tmp/warp-client.sh"
     ]
   }
 }

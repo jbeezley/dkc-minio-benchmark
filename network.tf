@@ -43,3 +43,9 @@ resource "aws_security_group" "main" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_eip" "minio" {
+  vpc                       = true
+  associate_with_private_ip = "10.0.1.10"
+  depends_on                = [aws_internet_gateway.default]
+}

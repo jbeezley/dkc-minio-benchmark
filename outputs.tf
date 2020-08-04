@@ -1,9 +1,9 @@
-output "minio_server_ip" {
+output "minio_server_private_ip" {
   value = aws_instance.minio.private_ip
 }
 
-output "worker_ip" {
-  value = aws_instance.worker.private_ip
+output "minio_server_public_ip" {
+  value = aws_instance.minio.public_ip
 }
 
 output "warp_ip" {

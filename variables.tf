@@ -22,11 +22,11 @@ variable "aws_ami" {
 }
 
 variable "minio_server_instance" {
-  default = "t2.micro"
+  default = "m5d.16xlarge"
 }
 
 variable "warp_server_instance" {
-  default = "t2.micro"
+  default = "m5a.16xlarge"
 }
 
 variable "worker_instance" {
